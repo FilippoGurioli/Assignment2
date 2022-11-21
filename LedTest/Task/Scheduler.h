@@ -4,7 +4,7 @@
 #include "ITask.h"
 #include "Timer.h"
 
-#define MAX_TASKS 3
+#define MAX_TASKS 5
 
 class Scheduler {
     private:
@@ -36,6 +36,16 @@ class Scheduler {
                 if (taskList[i]->updateAndCheckTime(basePeriod)) {
                     taskList[i]->tick();
                 }
+            }
+        }
+
+        bool pop() {
+            if (nTasks > 0) {
+                nTasks--;
+                taskList[nTasks] = NULL;
+                return true;
+            } else {
+                return false;
             }
         }
 };

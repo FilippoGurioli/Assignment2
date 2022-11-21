@@ -4,6 +4,7 @@
 #include "ITask.h"
 #include "../Sonar/Sonar.h"
 #include "../Led/Led.h"
+#include "State.h"
 
 #define PE_N 1000
 #define PE_P 500
@@ -12,12 +13,6 @@
 #define WL1 200
 #define WL2 100
 #define WL3 50
-
-enum State {
-    NORMAL,
-    PREALARM,
-    ALARM
-};
 
 class WaterDetectionTask: public ITask {
     
@@ -53,16 +48,16 @@ class WaterDetectionTask: public ITask {
 
         void tick() {
             int distance = sonar->getDistance();
-            if (distance > WL1 && state != NORMAL) {
+            if (distance > WL1 && state != NORMAL) { //->NORMAL
                 state = NORMAL;
                 greenLed->switchOn();
                 redLed->switchOff();
                 this->switchPeriod(PE_N);
-            } else if (distance <= WL1 && distance > WL2 && state != PREALARM) {
+            } else if (distance <= WL1 && distance > WL2 && state != PREALARM) { //->PREALARM
                 state = PREALARM;
                 this->switchPeriod(PE_P);
                 greenLed->switchOn();
-            } else if (distance <= WL2 && state != ALARM) {
+            } else if (distance <= WL2 && state != ALARM) { //->ALARM
                 state = ALARM;
                 redLed->switchOn();
                 greenLed->switchOff();
@@ -74,10 +69,10 @@ class WaterDetectionTask: public ITask {
                     redLed->switchOn();
                 }
             }
+        }
 
-            Serial.print(distance);
-            Serial.print(" ");
-            Serial.println(state);
+        State getState() {
+            return this->state;
         }
 };
 

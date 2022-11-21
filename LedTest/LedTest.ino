@@ -6,21 +6,32 @@
 #define GLEDPIN 12
 #define RLEDPIN 13
 
-#include "Task/NormalBhvTask.h"
 #include "Task/Scheduler.h"
+#include "Task/Controller.h"
+#include "Task/LampTask.h"
 #include "Task/WaterDetectionTask.h"
+//#include "Task/AlarmTask.h"
 
 Scheduler scheduler;
+Controller* controller;
+WaterDetectionTask* wdt;
+LampTask* lt;
+//AlarmTask* al;
 
 void setup() {
   Serial.begin(9600);
+  wdt = new WaterDetectionTask(GLEDPIN, RLEDPIN, STRIG, SECHO);
+  lt = new LampTask(LEDPIN, PRPIN, PIRPIN);
+  controller = new Controller(wdt, lt,/* at,*/ scheduler);
+  //at = new AlarmTask(...);
   scheduler.init(50);
-  ITask* nbt = new NormalBhvTask(LEDPIN, PRPIN, PIRPIN);
-  ITask* wdt = new WaterDetectionTask(GLEDPIN, RLEDPIN, STRIG, SECHO);
-  nbt->init(250);
   wdt->init(1000);
-  scheduler.addTask(nbt);
+  lt->init(250);
+  controller->init(250);
+
+  scheduler.addTask(controller);
   scheduler.addTask(wdt);
+  scheduler.addTask(lt);
 }
 
 void loop() {

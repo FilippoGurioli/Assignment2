@@ -1,15 +1,15 @@
-#ifndef NORMALBHV
-#define NORMALBHV
+#ifndef LAMPTASK
+#define LAMPTASK
 
 #define TH 300
-#define T1 3000
+#define T1 4000
 
 #include "ITask.h"
 #include "../Led/Led.h"
 #include "../Photoresistor/Photoresistor.h"
 #include "../Pir/Pir.h"
 
-class NormalBhvTask: public ITask {
+class LampTask: public ITask {
     
     private:
         int ledPin;
@@ -19,13 +19,13 @@ class NormalBhvTask: public ITask {
         IPir* pir;
         IPhotoresistor* pr;
         /*
-        knowing the period of this task, I can create a counter that count how many times
+        I create a counter that count how many times
         "tick" is called to create the T1 delay of the lamp.
         */
         int cont;
     
     public:
-        NormalBhvTask(int ledPin, int prPin, int pirPin) {
+        LampTask(int ledPin, int prPin, int pirPin) {
             this->ledPin = ledPin;
             this->prPin = prPin;
             this->pirPin = pirPin;
