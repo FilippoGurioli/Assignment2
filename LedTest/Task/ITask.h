@@ -24,6 +24,8 @@ class ITask {
                 return false;
             }
         }
+
+        virtual void reset() = 0;
 };
 
 #endif

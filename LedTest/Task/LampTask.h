@@ -29,7 +29,7 @@ class LampTask: public ITask {
             this->ledPin = ledPin;
             this->prPin = prPin;
             this->pirPin = pirPin;
-            cont = 0;
+            this->cont = 0;
         }
 
         void init(int period) {
@@ -47,16 +47,20 @@ class LampTask: public ITask {
             } else if (light <= TH) {
                 if (!led->isOn() && presence) {
                     led->switchOn();
-                    cont = 0;
+                    this->cont = 0;
                 } else if (led->isOn() && !presence) {
                     if (cont * this->myPeriod < T1) {
                         cont++;
                     } else {
                         led->switchOff();
-                        cont = 0;
+                        this->cont = 0;
                     }
                 }
             }
+        }
+
+        void reset() {
+            this->led->switchOff();
         }
 };
 

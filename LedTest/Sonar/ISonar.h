@@ -5,6 +5,7 @@ class ISonar {
 
     public:
         virtual int getDistance() = 0;
+        
 };
 
 #endif

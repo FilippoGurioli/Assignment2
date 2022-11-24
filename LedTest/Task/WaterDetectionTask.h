@@ -10,9 +10,9 @@
 #define PE_P 500
 #define PE_A 250
 
-#define WL1 200
-#define WL2 100
-#define WL3 50
+#define WL1 100
+#define WL2 50
+#define WL3 25
 
 class WaterDetectionTask: public ITask {
     
@@ -44,10 +44,11 @@ class WaterDetectionTask: public ITask {
             redLed = new Led(redLedPin);
             greenLed = new Led(greenLedPin);
             sonar = new Sonar(trigPin, echoPin);
+            this->greenLed->switchOn();
         }
 
         void tick() {
-            int distance = sonar->getDistance();
+            int distance = this->sonar->getDistance();
             if (distance > WL1 && state != NORMAL) { //->NORMAL
                 state = NORMAL;
                 greenLed->switchOn();
@@ -74,6 +75,15 @@ class WaterDetectionTask: public ITask {
         State getState() {
             return this->state;
         }
+
+        int getDistance() {
+            return this->sonar->getDistance();
+        }
+
+        void reset () {
+            //Nothing to reset
+        }
+
 };
 
 #endif

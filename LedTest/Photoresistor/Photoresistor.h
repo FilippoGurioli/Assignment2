@@ -20,6 +20,7 @@ class Photoresistor: public IPhotoresistor {
         int getLightLevel() {
             return analogRead(this->pin);
         }
+        
 };
 
 #endif

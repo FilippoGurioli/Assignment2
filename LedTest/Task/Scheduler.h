@@ -4,7 +4,7 @@
 #include "ITask.h"
 #include "Timer.h"
 
-#define MAX_TASKS 5
+#define MAX_TASKS 10
 
 class Scheduler {
     private:
@@ -42,11 +42,16 @@ class Scheduler {
         bool pop() {
             if (nTasks > 0) {
                 nTasks--;
+                taskList[nTasks]->reset(); //Anche se idealmente resetterebbe la task, non l'oggetto usato dalla task
                 taskList[nTasks] = NULL;
                 return true;
             } else {
                 return false;
             }
+        }
+
+        int getTasks() {
+            return nTasks;
         }
 };
 

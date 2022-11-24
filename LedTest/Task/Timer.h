@@ -54,6 +54,7 @@ class Timer {
             while(!timerFlag) {}
             timerFlag = false;
         }
+        
 };
 
 #endif

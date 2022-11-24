@@ -18,6 +18,7 @@ class Pir: public IPir {
         bool getPresence() {
             return digitalRead(this->pin);
         }
+        
 };
 
 #endif

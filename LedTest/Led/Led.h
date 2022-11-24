@@ -30,6 +30,7 @@ class Led: public ILed {
         bool isOn() {
             return state;
         }
+        
 };
 
 #endif

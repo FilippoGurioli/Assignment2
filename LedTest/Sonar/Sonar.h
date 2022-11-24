@@ -24,6 +24,7 @@ class Sonar: public ISonar {
             digitalWrite(this->trig, LOW);
             return pulseIn(this->echo, HIGH) * 0.034 / 2;
         }
+        
 };
 
 #endif
