@@ -1,6 +1,7 @@
 #ifndef DISPLAYY
 #define DISPLAYY
 
+#include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 #include "IDisplay.h"
@@ -8,7 +9,7 @@
 #define WIDTH 128
 #define HEIGHT 64
 
-Adafruit_SSD1306 display(WIDTH, HEIGHT);
+Adafruit_SSD1306 display(WIDTH, HEIGHT, &Wire, -1);
 
 class Display: public IDisplay {
 
@@ -22,7 +23,8 @@ class Display: public IDisplay {
             this->line = 10;
         }
 
-        void print(String string, int size, int x, int y) {
+        //size prende valori da 1 a 8
+        void print(String string, int size, int x, int y) { 
             display.setTextSize(size);
             display.setCursor(x,y);
             display.println(string);
@@ -31,7 +33,7 @@ class Display: public IDisplay {
 
         void printLine(String string, bool big){
 
-            if(big) {
+            if(!big) {
                 this->print(string, 1, 10, line);
                 line += 10;
             } else {

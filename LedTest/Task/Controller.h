@@ -7,7 +7,7 @@
 #define SECHO 4
 #define GLEDPIN 6
 #define RLEDPIN 7
-#define PIRPIN 11
+#define PIRPIN 8
 
 #include "Scheduler.h"
 #include "LampTask.h"
