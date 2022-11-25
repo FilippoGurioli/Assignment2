@@ -8,23 +8,24 @@
 #define GLEDPIN 6
 #define RLEDPIN 7
 #define PIRPIN 8
+#define SERVOPIN 9
 
 #include "Scheduler.h"
 #include "LampTask.h"
 #include "WaterDetectionTask.h"
-#include "LCDTask.h"
+//#include "LCDTask.h"
 #include "ITask.h"
 #include "State.h"
-//#include "AlarmTask.h"
+#include "ServoTask.h"
 
 class Controller: public ITask {
 
     private:
         WaterDetectionTask* wdt;
         LampTask* lt;
-        LCDTask* lcdt;
-        //AlarmTask* at;
+        //LCDTask* lcdt;
         Scheduler* scheduler;
+        ServoTask* servoTask;
         State state;
     
     public:
@@ -32,63 +33,37 @@ class Controller: public ITask {
             this->scheduler = scheduler;
             this->wdt = new WaterDetectionTask(GLEDPIN, RLEDPIN, STRIG, SECHO);
             this->lt = new LampTask(LEDPIN, PRPIN, PIRPIN);
-            this->lcdt = new LCDTask(wdt);
+            //this->lcdt = new LCDTask(wdt);
+            this->servoTask = new ServoTask(SERVOPIN, wdt);
             this->init(50);
-            wdt->init(1000);
-            lt->init(250);
-            lcdt->init(500);
+            this->wdt->init(1000);
+            this->lt->init(250);
+            this->servoTask->init(1000);
+            //this->lcdt->init(750);
             this->scheduler->addTask(this);
             this->scheduler->addTask(wdt);
             this->scheduler->addTask(lt);
-            //this->at = at;
             this->state = NORMAL;
         }
 
         void tick() {
             State newState = this->wdt->getState();
-            /*if (state == NORMAL) {
-                if (newState == PREALARM) {
-                    this->scheduler->addTask(this->lcdt);
-                } else if (newState == ALARM) {
-                    scheduler->pop();
-                    this->scheduler->addTask(this->lt);
-                    this->scheduler->addTask(this->lcdt);
-                }
-            } else if (state == PREALARM) {
-                if (newState == NORMAL) {
-                    scheduler->pop();
-                } else if (newState == ALARM) {
-                    scheduler->pop();
-                    scheduler->pop();
-                    this->scheduler->addTask(this->lt);
-                    this->scheduler->addTask(this->lcdt);
-                }
-            } else {
-                if (newState == NORMAL) {
-                    scheduler->pop();
-                    scheduler->pop();
-                    this->scheduler->addTask(this->lt);
-                } else if (newState == PREALARM) {
-                    scheduler->pop();
-                    scheduler->pop();
-                    this->scheduler->addTask(this->lt);
-                    this->scheduler->addTask(this->lcdt);
-                }
-            }*/
             if (state == NORMAL) {
                 if (newState == PREALARM) {
-                    this->scheduler->addTask(this->lcdt);
+                    //this->scheduler->addTask(this->lcdt);
                 } else if (newState == ALARM) {
                     this->scheduler->pop();
-                    this->scheduler->addTask(this->lcdt);
+                    this->scheduler->addTask(this->servoTask);
+                    //this->scheduler->addTask(this->lcdt);
                 }
             } else if (state == PREALARM) {
                 if (newState == NORMAL) {
-                    this->scheduler->pop();
+                    //this->scheduler->pop();
                 } else if (newState == ALARM) {
                     this->scheduler->pop();
-                    this->scheduler->pop();
-                    this->scheduler->addTask(this->lcdt);
+                    //this->scheduler->pop();
+                    this->scheduler->addTask(this->servoTask);
+                    //this->scheduler->addTask(this->lcdt);
                 }
             } else {
                 if (newState == NORMAL) {
@@ -97,7 +72,7 @@ class Controller: public ITask {
                 } else if (newState == PREALARM) {
                     this->scheduler->pop();
                     this->scheduler->addTask(this->lt);
-                    this->scheduler->addTask(this->lcdt);
+                    //this->scheduler->addTask(this->lcdt);
                 }
             }
             state = newState;

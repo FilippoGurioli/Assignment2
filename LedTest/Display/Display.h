@@ -4,7 +4,6 @@
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
-#include <string.h>
 #include "IDisplay.h"
 
 #define WIDTH 128
@@ -27,12 +26,14 @@ class Display: public IDisplay {
             display.clearDisplay();
             display.setTextColor(WHITE);
             display.setTextWrap(false);
+            display.display();
         }
 
         void printTitle(String string) {
             display.setTextSize(2);
             display.setCursor(10, 10);
             display.println(string);
+            display.println();
             display.display();
         }
 
