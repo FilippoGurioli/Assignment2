@@ -4,42 +4,49 @@
 #include "ITask.h"
 #include "../Display/Display.h"
 #include "State.h"
-#include <string.h>
 
 class LCDTask: public ITask {
 
     private:
         IDisplay* display;
         WaterDetectionTask* wdt;
+        bool first;
 
     public:
         LCDTask(WaterDetectionTask* wdt/*, servotasdk*/) {
             this->wdt = wdt;
-            display = new Display();
+            this->display = new Display();
+            this->first = true;
         }
 
         void tick() {
+            State state = this->wdt->getState();
             int wl = this->wdt->getDistance();
             //int degrees = this->servoTask->getDegrees();
-            switch (this->wdt->getState()) {
-                case PREALARM:
-                    this->display->clear();
-                    this->display->printLine("PREALARM", true);
-                    this->display->printLine("Water level:", false);
-                    this->display->printLine(String(wl), false);
-                break;
+            if (first) {
+                if (state == PREALARM) {
+                    this->display->printTitle("PREALARM");
+                    this->display->printStatString("Water level: ");
+                } else if (state == ALARM) {
+                    this->display->printTitle("!!ALARM!!");
+                    this->display->printStatString("Water level: ");
+                    this->display->printStatString("Valve open:  ");
+                }
+                first = false;
+            }
+            switch (state) {
                 case ALARM:
-                    this->display->clear();
-                    this->display->printLine("ALARM", true);
-                    this->display->printLine("Degrees:          Water level:", false);
-                    String string = String(0) + "    " + String(wl);
-                    this->display->printLine(string, false);
-                break;
+                    this->display->updateStatValue(2, 23);
+                case PREALARM:
+                    this->display->updateStatValue(1, wl);
+                    break;
+                
             }
         }
 
         void reset() {
             this->display->clear();
+            this->first = true;
         }
 
 };
