@@ -2,6 +2,7 @@
 #define CONTROLLER
 
 #define PRPIN A0
+#define POTPIN A1
 #define LEDPIN 2
 #define STRIG 3
 #define SECHO 4
@@ -34,7 +35,7 @@ class Controller: public ITask {
             this->wdt = new WaterDetectionTask(GLEDPIN, RLEDPIN, STRIG, SECHO);
             this->lt = new LampTask(LEDPIN, PRPIN, PIRPIN);
             //this->lcdt = new LCDTask(wdt);
-            this->servoTask = new ServoTask(SERVOPIN, wdt);
+            this->servoTask = new ServoTask(SERVOPIN, POTPIN, wdt);
             this->init(50);
             this->wdt->init(1000);
             this->lt->init(250);
