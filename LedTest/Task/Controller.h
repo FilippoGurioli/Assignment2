@@ -30,6 +30,9 @@ class Controller: public ITask {
         Scheduler* scheduler;
         AlarmTask* at;
         State state;
+        bool isOn = false;
+        int wl = 0;
+        int angle = 0;
     
     public:
         Controller(Scheduler* scheduler) {
@@ -88,6 +91,25 @@ class Controller: public ITask {
                 }
             }
             state = newState;
+            bool newIsOn = this->lt->isOn();
+            if (newIsOn != this->isOn) {
+                if (newIsOn) {
+                    MsgService.sendMsg("ON");
+                } else {
+                    MsgService.sendMsg("OFF");
+                }
+                this->isOn = newIsOn;
+            }
+            int newWl = this->wdt->getDistance();
+            if (newWl != this->wl) {
+                MsgService.sendMsg(String(newWl));
+                this->wl = newWl;
+            }
+            int newAngle = this->at->getAngle();
+            if (newAngle != this->angle) {
+                MsgService.sendMsg(String(newAngle));
+                this->angle = newAngle;
+            }
         } 
 
         void reset () {

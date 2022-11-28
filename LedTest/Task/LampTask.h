@@ -62,6 +62,10 @@ class LampTask: public ITask {
         void reset() {
             this->led->switchOff();
         }
+
+        bool isOn() {
+            return this->led->isOn();
+        }
 };
 
 #endif
