@@ -19,10 +19,12 @@ class AlarmTask: public ITask {
         IButton* b;
         int cont;
         int max;
+        int bPin;
 
     public:
 
         AlarmTask(int sPin, int pPin, int bPin, WaterDetectionTask* wdt) {
+            this->bPin = bPin;
             this->servo.attach(sPin);
             this->pot = new Potentiometer(pPin);
             this->b = new Button(bPin);
@@ -52,6 +54,8 @@ class AlarmTask: public ITask {
 
         void reset() {
             this->servo.write(MINROT);
+            delete this->b;
+            this->b = new Button(bPin);
         }
 
         int getAngle(){
