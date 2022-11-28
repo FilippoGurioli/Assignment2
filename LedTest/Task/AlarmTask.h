@@ -53,6 +53,10 @@ class AlarmTask: public ITask {
         void reset() {
             this->servo.write(MINROT);
         }
+
+        int getAngle(){
+            return map(this->servo.read(), MINROT, MAXROT, 0, 180);
+        }
 };
 
 #endif
