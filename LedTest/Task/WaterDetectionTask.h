@@ -10,9 +10,9 @@
 #define PE_P 500
 #define PE_A 250
 
-#define WL1 100
-#define WL2 50
-#define WL3 25
+#define WL1 50
+#define WL2 25
+#define WL3 10
 
 class WaterDetectionTask: public ITask {
     

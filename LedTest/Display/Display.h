@@ -2,70 +2,63 @@
 #define DISPLAYY
 
 #include <Wire.h>
-#include <Adafruit_GFX.h>
-#include <Adafruit_SSD1306.h>
+#include <LiquidCrystal_I2C.h>
 #include "IDisplay.h"
 
-#define WIDTH 128
-#define HEIGHT 64
 #define MAX_VALUE_COORDS 5
-
-Adafruit_SSD1306 display(WIDTH, HEIGHT, &Wire, -1);
+LiquidCrystal_I2C display(0x27, 20, 4);
 
 class Display: public IDisplay {
 
     private:
-        int valueCoords[MAX_VALUE_COORDS][2];
-        int nValueCoords;
-
+        int cursors[MAX_VALUE_COORDS];
+        int head;
+        int val;
+    
     public:
 
         Display() {
-            this->nValueCoords = 0;
-            display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
-            display.clearDisplay();
-            display.setTextColor(WHITE);
-            display.setTextWrap(false);
+            this->val = 0;
+            this->head = 0;
+            display.init();
+            display.backlight();
+            display.clear();
             display.display();
         }
 
         void printTitle(String string) {
-            display.setTextSize(2);
-            display.setCursor(10, 10);
-            display.println(string);
-            display.println();
             display.display();
+            display.backlight();
+            display.setCursor(4, 0);
+            display.print(string);
+            display.setCursor(0, 1);
         }
 
         void printStatString(String stat) {
-            display.setTextSize(1);
-            display.print(stat);
-            this->valueCoords[nValueCoords][0] = display.getCursorX();
-            this->valueCoords[nValueCoords][1] = display.getCursorY();
-            this->nValueCoords++;
-            display.println(0);
-            display.display();
+            this->val += display.print(stat);
+            display.print(0);
+            display.print("   ");
+            this->cursors[head++] = val;
+            this->val += 4;
         }
 
-        bool updateStatValue(int row, int value) {
-            if (row > nValueCoords || row <= 0) {
+        bool updateStatValue(int pos, int value) {
+            if (pos <= 0 || pos > head) {
                 return false;
             }
-            display.fillRect(this->valueCoords[row - 1][0], this->valueCoords[row - 1][1], 16, 8, 0);
-            display.setCursor(this->valueCoords[row - 1][0], this->valueCoords[row - 1][1]);
+            pos--;
+            display.setCursor(this->cursors[pos], 1);
+            display.print("   ");
+            display.setCursor(this->cursors[pos], 1);
             display.print(value);
-            display.display();
             return true;
         }
 
         void clear() {
-            display.clearDisplay();
-            for (nValueCoords--; nValueCoords >= 0; nValueCoords--) { //Azzera valueCoords
-                this->valueCoords[nValueCoords][0] = NULL;
-                this->valueCoords[nValueCoords][1] = NULL;
-            }
-            this->nValueCoords = 0;
-            display.display();
+            display.clear();
+            this->head = 0;
+            this->val = 0;
+            display.noBacklight();
         }
 };
 

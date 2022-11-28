@@ -3,7 +3,7 @@
 
 #include "ITask.h"
 #include "../Display/Display.h"
-#include "State.h"
+#include "Utils/State.h"
 #include "AlarmTask.h"
 
 class LCDTask: public ITask {
@@ -28,12 +28,12 @@ class LCDTask: public ITask {
             int degrees = this->at->getAngle();
             if (first) {
                 if (state == PREALARM) {
-                    this->display->printTitle(F("PREALARM"));
-                    this->display->printStatString(F("Water level: "));
+                    this->display->printTitle("PREALARM!");
+                    this->display->printStatString("WL:");
                 } else if (state == ALARM) {
-                    this->display->printTitle(F("!!ALARM!!"));
-                    this->display->printStatString(F("Water level: "));
-                    this->display->printStatString(F("Valve open:  "));
+                    this->display->printTitle("!!ALARM!!");
+                    this->display->printStatString("WL:");
+                    this->display->printStatString("Valve:");
                 }
                 first = false;
             }
