@@ -42,7 +42,7 @@ class Scheduler {
         bool pop() {
             if (nTasks > 0) {
                 nTasks--;
-                taskList[nTasks]->reset(); //Anche se idealmente resetterebbe la task, non l'oggetto usato dalla task
+                taskList[nTasks]->reset();
                 taskList[nTasks] = NULL;
                 return true;
             } else {
