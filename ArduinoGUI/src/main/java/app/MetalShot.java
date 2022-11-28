@@ -2,6 +2,7 @@ package app;
 
 import java.io.IOException;
 import Communication.SerialCommChannel;
+import Communication.ShowSerialPorts;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -14,16 +15,18 @@ public final class MetalShot extends Application {
 	@Override
 	public void start(final Stage primaryStage) throws IOException {
 		try {
-			//Parent root = FXMLLoader.load(getClass().getResource("iot water check1.fxml"));
 			final FXMLLoader loader = new FXMLLoader(getClass().getResource("iot water check1.fxml"));
 			Parent root = loader.load();
 			primaryStage.setScene(new Scene(root));
 			primaryStage.show();
 
 			new Thread() {
+				ShowSerialPorts ssp;
+				
 				public void run() {
 					try {
-						SerialCommChannel channel = new SerialCommChannel("COM6",9600);
+						ssp = new ShowSerialPorts();
+						SerialCommChannel channel = new SerialCommChannel(ssp.getPort(),9600);
 						System.out.println("Waiting Arduino for rebooting...");		
 						Thread.sleep(4000);
 						System.out.println("Ready.");
@@ -37,17 +40,24 @@ public final class MetalShot extends Application {
 								@Override
 								public void run() {
 									if (msg.equals("NORMAL")) {
-										guiController.updateState("NORMAL");
+										guiController.updateState(msg);
+										guiController.disableSlider(true);
 									} else if (msg.equals("PREALARM")) {
-										guiController.updateState("PREALARM");
+										guiController.updateState(msg);
+										guiController.disableSlider(true);
 									} else if (msg.equals("ALARM")) {
-										guiController.updateState("ALARM");
+										guiController.updateState(msg);
+										guiController.disableSlider(false);
 									} else if (msg.equals("ON")) {
-										guiController.updateLight("ON");
+										guiController.updateLight(msg);
 									} else if (msg.equals("OFF")) {
-										guiController.updateLight("OFF");
+										guiController.updateLight(msg);
 									} else {
-										guiController.updateChart(Integer.parseInt(msg));
+										int raw = Integer.parseInt(msg);
+										raw = raw > 200 ? 200 : raw;
+										raw = raw < 0 ? 0 : raw;
+										int conversion = 100 - (raw / 2);
+										guiController.updateChart(conversion);
 									}
 								}
 							});
