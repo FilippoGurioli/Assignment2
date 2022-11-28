@@ -17,8 +17,9 @@
 #include "WaterDetectionTask.h"
 //#include "LCDTask.h"
 #include "ITask.h"
-#include "State.h"
+#include "Utils/State.h"
 #include "AlarmTask.h"
+#include "Utils/MsgService.cpp"
 
 class Controller: public ITask {
 
@@ -32,6 +33,7 @@ class Controller: public ITask {
     
     public:
         Controller(Scheduler* scheduler) {
+            MsgService.init();
             this->scheduler = scheduler;
             this->wdt = new WaterDetectionTask(GLEDPIN, RLEDPIN, STRIG, SECHO);
             this->lt = new LampTask(LEDPIN, PRPIN, PIRPIN);
@@ -52,16 +54,20 @@ class Controller: public ITask {
             State newState = this->wdt->getState();
             if (state == NORMAL) {
                 if (newState == PREALARM) {
+                    MsgService.sendMsg("PREALARM");
                     //this->scheduler->addTask(this->lcdt);
                 } else if (newState == ALARM) {
+                    MsgService.sendMsg("ALARM");
                     this->scheduler->pop();
                     this->scheduler->addTask(this->at);
                     //this->scheduler->addTask(this->lcdt);
                 }
             } else if (state == PREALARM) {
                 if (newState == NORMAL) {
+                    MsgService.sendMsg("NORMAL");
                     //this->scheduler->pop();
                 } else if (newState == ALARM) {
+                    MsgService.sendMsg("ALARM");
                     //this->scheduler->pop();
                     this->scheduler->pop();
                     this->scheduler->addTask(this->at);
@@ -69,10 +75,12 @@ class Controller: public ITask {
                 }
             } else {
                 if (newState == NORMAL) {
+                    MsgService.sendMsg("NORMAL");
                     this->scheduler->pop();
                     //this->scheduler->pop();
                     this->scheduler->addTask(this->lt);
                 } else if (newState == PREALARM) {
+                    MsgService.sendMsg("PREALARM");
                     this->scheduler->pop();
                     //this->scheduler->pop();
                     this->scheduler->addTask(this->lt);
