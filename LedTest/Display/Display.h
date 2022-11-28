@@ -21,9 +21,8 @@ class Display: public IDisplay {
             this->val = 0;
             this->head = 0;
             display.init();
-            display.backlight();
+            display.noBacklight();
             display.clear();
-            display.display();
         }
 
         void printTitle(String string) {
