@@ -1,0 +1,1 @@
+Librerie da includere nel .ino per far funzionare il programma.
