@@ -1,6 +1,7 @@
 package app;
 
 import java.io.IOException;
+
 import Communication.SerialCommChannel;
 import Communication.ShowSerialPorts;
 import javafx.application.Application;
@@ -39,10 +40,10 @@ public final class MetalShot extends Application {
 							Platform.runLater(new Runnable() {
 								@Override
 								public void run() {
-									if (msg.equals("NORMAL") || msg.equals("PREALARM") || msg.equals("ALARM")
-																	  ||
-												     msg.equals("ON") || msg.equals("OFF")) {
+									if (msg.equals("NORMAL") || msg.equals("PREALARM") || msg.equals("ALARM")) {
 											guiController.updateState(msg);
+									} else if (msg.equals("ON") || msg.equals("OFF")) {
+										guiController.updateLight(msg);
 									} else {
 										int raw = Integer.parseInt(msg);
 										raw = raw > 200 ? 200 : raw;
@@ -52,7 +53,7 @@ public final class MetalShot extends Application {
 									}
 								}
 							});
-							Thread.sleep(200);
+							Thread.sleep(300);
 						}
 
 					} catch (Exception e) {

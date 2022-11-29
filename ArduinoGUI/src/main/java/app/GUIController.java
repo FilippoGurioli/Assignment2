@@ -25,12 +25,18 @@ public class GUIController implements Initializable{
     private Slider sldServo;
     
     private XYChart.Series<Integer, Integer> series = new Series<>();
+    private XYChart.Series<Integer, Integer> WL1 = new Series<>();
+    private XYChart.Series<Integer, Integer> WL2 = new Series<>();
     private int time = 0;
     
 	@Override
     public void initialize(URL location, ResourceBundle resources) {
         this.lblLight.setText("Light:OFF");
+        this.WL1.setName("WL1");
+        this.WL2.setName("WL2");
     	this.areaChart.getData().add(series);
+    	this.areaChart.getData().add(WL1);
+    	this.areaChart.getData().add(WL2);
     	this.xAxis.setForceZeroInRange(false);
     	this.areaChart.setCreateSymbols(false);
     	this.areaChart.getYAxis().setAutoRanging(false);
@@ -50,8 +56,12 @@ public class GUIController implements Initializable{
     	time++;
     	if (time >= 25) {
     		this.series.getData().remove(0);
+    		this.WL1.getData().remove(0);
+    		this.WL2.getData().remove(0);
     	}
     	this.series.getData().add(new XYChart.Data<>(time, value));
+    	this.WL1.getData().add(new XYChart.Data<>(time, 75));
+    	this.WL2.getData().add(new XYChart.Data<>(time, 92));
     }
     
     void disableSlider(boolean state) {

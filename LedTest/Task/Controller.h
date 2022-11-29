@@ -31,8 +31,6 @@ class Controller: public ITask {
         AlarmTask* at;
         State state;
         bool isOn = false;
-        int wl = 0;
-        int angle = 0;
         int cont = 0;
     
     public:
@@ -86,11 +84,7 @@ class Controller: public ITask {
                 }
             }
             if (cont == 0) {
-                if (this->state != newState) {
-                    if (newState == NORMAL)   MsgService.sendMsg("NORMAL");
-                    else if (newState == PREALARM)   MsgService.sendMsg("PREALARM");
-                    else   MsgService.sendMsg("ALARM");
-                }
+                MsgService.sendMsg(String(this->wdt->getDistance()));
                 bool newIsOn = this->lt->isOn();
                 if (newIsOn != this->isOn) {
                     if (newIsOn) {
@@ -100,19 +94,13 @@ class Controller: public ITask {
                     }
                     this->isOn = newIsOn;
                 }
-                int newWl = this->wdt->getDistance();
-                if (newWl != this->wl) {
-                    MsgService.sendMsg(String(newWl));
-                    this->wl = newWl;
-                }
-                /*int newAngle = this->at->getAngle();
-                if (newAngle != this->angle) {
-                    MsgService.sendMsg(String(newAngle));
-                    this->angle = newAngle;
-                }*/
+                if (newState == NORMAL)   MsgService.sendMsg("NORMAL");
+                else if (newState == PREALARM)   MsgService.sendMsg("PREALARM");
+                else   MsgService.sendMsg("ALARM");
+                
             }
             this->cont++;
-            this->cont = cont % 4;
+            this->cont = cont % 18;
             this->state = newState;
         } 
 
