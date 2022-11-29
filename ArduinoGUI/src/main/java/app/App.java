@@ -18,6 +18,6 @@ public final class App {
      * @param args
      */
     public static void main(final String... args) {
-        Application.launch(MetalShot.class, args);
+        Application.launch(GUIMain.class, args);
     }
 }

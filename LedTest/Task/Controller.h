@@ -46,9 +46,9 @@ class Controller: public ITask {
             this->lt->init(250);
             this->at->init(100);
             this->lcdt->init(750);
-            this->scheduler->addTask(this);
-            this->scheduler->addTask(wdt);
-            this->scheduler->addTask(lt);
+            this->scheduler->pushTask(this);
+            this->scheduler->pushTask(wdt);
+            this->scheduler->pushTask(lt);
             this->state = NORMAL;
         }
 
@@ -56,31 +56,31 @@ class Controller: public ITask {
             State newState = this->wdt->getState();
             if (state == NORMAL) {
                 if (newState == PREALARM) {
-                    this->scheduler->addTask(this->lcdt);
+                    this->scheduler->pushTask(this->lcdt);
                 } else if (newState == ALARM) {
-                    this->scheduler->pop();
-                    this->scheduler->addTask(this->at);
-                    this->scheduler->addTask(this->lcdt);
+                    this->scheduler->popTask();
+                    this->scheduler->pushTask(this->at);
+                    this->scheduler->pushTask(this->lcdt);
                 }
             } else if (state == PREALARM) {
                 if (newState == NORMAL) {
-                    this->scheduler->pop();
+                    this->scheduler->popTask();
                 } else if (newState == ALARM) {
-                    this->scheduler->pop();
-                    this->scheduler->pop();
-                    this->scheduler->addTask(this->at);
-                    this->scheduler->addTask(this->lcdt);
+                    this->scheduler->popTask();
+                    this->scheduler->popTask();
+                    this->scheduler->pushTask(this->at);
+                    this->scheduler->pushTask(this->lcdt);
                 }
             } else {
                 if (newState == NORMAL) {
-                    this->scheduler->pop();
-                    this->scheduler->pop();
-                    this->scheduler->addTask(this->lt);
+                    this->scheduler->popTask();
+                    this->scheduler->popTask();
+                    this->scheduler->pushTask(this->lt);
                 } else if (newState == PREALARM) {
-                    this->scheduler->pop();
-                    this->scheduler->pop();
-                    this->scheduler->addTask(this->lt);
-                    this->scheduler->addTask(this->lcdt);
+                    this->scheduler->popTask();
+                    this->scheduler->popTask();
+                    this->scheduler->pushTask(this->lt);
+                    this->scheduler->pushTask(this->lcdt);
                 }
             }
             if (cont == 0) {

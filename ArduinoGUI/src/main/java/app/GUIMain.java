@@ -11,7 +11,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-public final class MetalShot extends Application {
+public final class GUIMain extends Application {
 
 	@Override
 	public void start(final Stage primaryStage) throws IOException {

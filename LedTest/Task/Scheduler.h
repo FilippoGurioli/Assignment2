@@ -20,7 +20,7 @@ class Scheduler {
             nTasks = 0;
         }
 
-        bool addTask(ITask* task) {
+        bool pushTask(ITask* task) {
             if (nTasks < MAX_TASKS - 1) {
                 taskList[nTasks] = task;
                 nTasks++;
@@ -39,7 +39,7 @@ class Scheduler {
             }
         }
 
-        bool pop() {
+        bool popTask() {
             if (nTasks > 0) {
                 nTasks--;
                 taskList[nTasks]->reset();
