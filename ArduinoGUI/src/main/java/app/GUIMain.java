@@ -23,6 +23,13 @@ public final class GUIMain extends Application {
 
 			new Thread() {
 				ShowSerialPorts ssp;
+				boolean first = true;
+				int WL1;
+				int WL2;
+				int WL3;
+				int period = 0;
+				
+				String[] msgArray = {"","","",""};
 				
 				public void run() {
 					try {
@@ -33,26 +40,44 @@ public final class GUIMain extends Application {
 						System.out.println("Ready.");
 
 						while (true){
-							String msg = channel.receiveMsg();
-							System.out.println(msg);
+							
+							for (int i = 0; i < 3; i++) {
+								msgArray[i] = channel.receiveMsg();
+							}
+							
+							if (first) {
+								//period = Integer.parseInt(msgArray[0]);
+								//WL1 = Integer.parseInt(msgArray[1]);
+								//WL2 = Integer.parseInt(msgArray[2]);
+								//WL3 = Integer.parseInt(msgArray[3]);
+								first = false;
+							}
+							
 							GUIController guiController = (GUIController) loader.getController();
-
+							
 							Platform.runLater(new Runnable() {
 								@Override
 								public void run() {
-									if (msg.equals("NORMAL") || msg.equals("PREALARM") || msg.equals("ALARM")) {
-										guiController.updateState(msg);
-										if (msg.equals("ALARM")) guiController.disableSlider(false);
-										else guiController.disableSlider(true);
-									} else if (msg.equals("ON") || msg.equals("OFF")) {
-										guiController.updateLight(msg);
+									
+									//Update State
+									guiController.updateState(msgArray[0]);
+									//Update Light
+									guiController.updateLight(msgArray[1]);
+									//Update Chart
+									int raw = Integer.parseInt(msgArray[2]);
+									raw = raw > 200 ? 200 : raw;
+									raw = raw < 0 ? 0 : raw;
+									int conversion = 100 - (raw / 2);
+									guiController.updateChart(conversion);
+									//Update Servo/Slider
+									//guiController.updateState(msgArray[3]);
+									
+									if (msgArray[0].equals("ALARM")) {
+										guiController.disableSlider(false);
 									} else {
-										int raw = Integer.parseInt(msg);
-										raw = raw > 200 ? 200 : raw;
-										raw = raw < 0 ? 0 : raw;
-										int conversion = 100 - (raw / 2);
-										guiController.updateChart(conversion);
+										guiController.disableSlider(true);
 									}
+									
 								}
 							});
 							Thread.sleep(300);

@@ -30,7 +30,6 @@ class Controller: public ITask {
         Scheduler* scheduler;
         AlarmTask* at;
         State state;
-        bool isOn = false;
         int cont = 0;
     
     public:
@@ -84,20 +83,18 @@ class Controller: public ITask {
                 }
             }
             if (cont == 0) {
-                MsgService.sendMsg(String(this->wdt->getDistance()));
-                bool newIsOn = this->lt->isOn();
-                if (newIsOn != this->isOn) {
-                    if (newIsOn) {
-                        MsgService.sendMsg("ON");
-                    } else {
-                        MsgService.sendMsg("OFF");
-                    }
-                    this->isOn = newIsOn;
-                }
+
                 if (newState == NORMAL)   MsgService.sendMsg("NORMAL");
                 else if (newState == PREALARM)   MsgService.sendMsg("PREALARM");
                 else   MsgService.sendMsg("ALARM");
                 
+                if (this->lt->isOn()) {
+                    MsgService.sendMsg("ON");
+                } else {
+                    MsgService.sendMsg("OFF");
+                }
+                
+                MsgService.sendMsg(String(this->wdt->getDistance()));
             }
             this->cont++;
             this->cont = cont % 18;

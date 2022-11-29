@@ -1,13 +1,9 @@
 package app;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
-
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.chart.AreaChart;
@@ -85,6 +81,10 @@ public class GUIController implements Initializable{
     
     int getSUpdate() {
     	return this.degrees;
+    }
+    
+    void setValues() {
+    	
     }
     
     
