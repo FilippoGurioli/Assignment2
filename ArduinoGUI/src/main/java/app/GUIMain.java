@@ -70,13 +70,14 @@ public final class GUIMain extends Application {
 									int conversion = 100 - (raw / 2);
 									guiController.updateChart(conversion);
 									//Update Servo/Slider
-									//guiController.updateState(msgArray[3]);
 									
 									if (msgArray[0].equals("ALARM")) {
 										guiController.disableSlider(false);
 									} else {
 										guiController.disableSlider(true);
 									}
+									
+									//channel.sendMsg(String.valueOf(guiController.getSUpdate()));
 									
 								}
 							});
