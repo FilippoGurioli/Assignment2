@@ -15,7 +15,7 @@
    <top>
       <BorderPane prefHeight="33.0" prefWidth="581.0" BorderPane.alignment="CENTER">
          <right>
-            <Label fx:id="lblLight" alignment="CENTER" contentDisplay="CENTER" prefHeight="27.0" prefWidth="117.0" text="Light: ON" BorderPane.alignment="CENTER">
+            <Label fx:id="lblLight" alignment="CENTER" contentDisplay="CENTER" prefHeight="27.0" prefWidth="117.0" text="Light: OFF" BorderPane.alignment="CENTER">
                <BorderPane.margin>
                   <Insets bottom="10.0" left="10.0" right="20.0" top="10.0" />
                </BorderPane.margin>

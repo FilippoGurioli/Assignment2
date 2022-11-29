@@ -33,6 +33,7 @@ class Controller: public ITask {
         bool isOn = false;
         int wl = 0;
         int angle = 0;
+        int cont = 0;
     
     public:
         Controller(Scheduler* scheduler) {
@@ -57,20 +58,16 @@ class Controller: public ITask {
             State newState = this->wdt->getState();
             if (state == NORMAL) {
                 if (newState == PREALARM) {
-                    MsgService.sendMsg("PREALARM");
                     this->scheduler->addTask(this->lcdt);
                 } else if (newState == ALARM) {
-                    MsgService.sendMsg("ALARM");
                     this->scheduler->pop();
                     this->scheduler->addTask(this->at);
                     this->scheduler->addTask(this->lcdt);
                 }
             } else if (state == PREALARM) {
                 if (newState == NORMAL) {
-                    MsgService.sendMsg("NORMAL");
                     this->scheduler->pop();
                 } else if (newState == ALARM) {
-                    MsgService.sendMsg("ALARM");
                     this->scheduler->pop();
                     this->scheduler->pop();
                     this->scheduler->addTask(this->at);
@@ -78,38 +75,45 @@ class Controller: public ITask {
                 }
             } else {
                 if (newState == NORMAL) {
-                    MsgService.sendMsg("NORMAL");
                     this->scheduler->pop();
                     this->scheduler->pop();
                     this->scheduler->addTask(this->lt);
                 } else if (newState == PREALARM) {
-                    MsgService.sendMsg("PREALARM");
                     this->scheduler->pop();
                     this->scheduler->pop();
                     this->scheduler->addTask(this->lt);
                     this->scheduler->addTask(this->lcdt);
                 }
             }
-            state = newState;
-            bool newIsOn = this->lt->isOn();
-            if (newIsOn != this->isOn) {
-                if (newIsOn) {
-                    MsgService.sendMsg("ON");
-                } else {
-                    MsgService.sendMsg("OFF");
+            if (cont == 0) {
+                if (this->state != newState) {
+                    if (newState == NORMAL)   MsgService.sendMsg("NORMAL");
+                    else if (newState == PREALARM)   MsgService.sendMsg("PREALARM");
+                    else   MsgService.sendMsg("ALARM");
                 }
-                this->isOn = newIsOn;
+                bool newIsOn = this->lt->isOn();
+                if (newIsOn != this->isOn) {
+                    if (newIsOn) {
+                        MsgService.sendMsg("ON");
+                    } else {
+                        MsgService.sendMsg("OFF");
+                    }
+                    this->isOn = newIsOn;
+                }
+                int newWl = this->wdt->getDistance();
+                if (newWl != this->wl) {
+                    MsgService.sendMsg(String(newWl));
+                    this->wl = newWl;
+                }
+                /*int newAngle = this->at->getAngle();
+                if (newAngle != this->angle) {
+                    MsgService.sendMsg(String(newAngle));
+                    this->angle = newAngle;
+                }*/
             }
-            int newWl = this->wdt->getDistance();
-            if (newWl != this->wl) {
-                MsgService.sendMsg(String(newWl));
-                this->wl = newWl;
-            }
-            /*int newAngle = this->at->getAngle();
-            if (newAngle != this->angle) {
-                MsgService.sendMsg(String(newAngle));
-                this->angle = newAngle;
-            }*/
+            this->cont++;
+            this->cont = cont % 4;
+            this->state = newState;
         } 
 
         void reset () {
