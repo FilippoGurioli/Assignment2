@@ -105,11 +105,11 @@ class Controller: public ITask {
                 MsgService.sendMsg(String(newWl));
                 this->wl = newWl;
             }
-            int newAngle = this->at->getAngle();
+            /*int newAngle = this->at->getAngle();
             if (newAngle != this->angle) {
                 MsgService.sendMsg(String(newAngle));
                 this->angle = newAngle;
-            }
+            }*/
         } 
 
         void reset () {
