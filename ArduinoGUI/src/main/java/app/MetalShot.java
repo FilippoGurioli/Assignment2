@@ -41,7 +41,9 @@ public final class MetalShot extends Application {
 								@Override
 								public void run() {
 									if (msg.equals("NORMAL") || msg.equals("PREALARM") || msg.equals("ALARM")) {
-											guiController.updateState(msg);
+										guiController.updateState(msg);
+										if (msg.equals("ALARM")) guiController.disableSlider(false);
+										else guiController.disableSlider(true);
 									} else if (msg.equals("ON") || msg.equals("OFF")) {
 										guiController.updateLight(msg);
 									} else {

@@ -1,7 +1,13 @@
 package app;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.chart.AreaChart;
@@ -28,6 +34,7 @@ public class GUIController implements Initializable{
     private XYChart.Series<Integer, Integer> WL1 = new Series<>();
     private XYChart.Series<Integer, Integer> WL2 = new Series<>();
     private int time = 0;
+    private int degrees = 0;
     
 	@Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -41,7 +48,15 @@ public class GUIController implements Initializable{
     	this.areaChart.setCreateSymbols(false);
     	this.areaChart.getYAxis().setAutoRanging(false);
     	this.series.setName("Water level");
-    	this.sldServo.disableProperty().set(true);
+    	
+    	//Slider setup
+        this.sldServo.valueProperty().addListener(new ChangeListener<Number>() {
+		        @Override
+		        public void changed(ObservableValue<? extends Number> observableValue, Number oldValue, Number newValue) {
+		        	degrees = newValue.intValue();
+		        }
+		});
+        this.sldServo.disableProperty().set(true);
     }
     
     void updateState(String state) {
@@ -67,4 +82,10 @@ public class GUIController implements Initializable{
     void disableSlider(boolean state) {
     	this.sldServo.disableProperty().set(state);
     }
+    
+    int getSUpdate() {
+    	return this.degrees;
+    }
+    
+    
 }
