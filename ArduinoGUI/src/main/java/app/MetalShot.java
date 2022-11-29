@@ -39,19 +39,10 @@ public final class MetalShot extends Application {
 							Platform.runLater(new Runnable() {
 								@Override
 								public void run() {
-									if (msg.equals("NORMAL")) {
-										guiController.updateState(msg);
-										guiController.disableSlider(true);
-									} else if (msg.equals("PREALARM")) {
-										guiController.updateState(msg);
-										guiController.disableSlider(true);
-									} else if (msg.equals("ALARM")) {
-										guiController.updateState(msg);
-										guiController.disableSlider(false);
-									} else if (msg.equals("ON")) {
-										guiController.updateLight(msg);
-									} else if (msg.equals("OFF")) {
-										guiController.updateLight(msg);
+									if (msg.equals("NORMAL") || msg.equals("PREALARM") || msg.equals("ALARM")
+																	  ||
+												     msg.equals("ON") || msg.equals("OFF")) {
+											guiController.updateState(msg);
 									} else {
 										int raw = Integer.parseInt(msg);
 										raw = raw > 200 ? 200 : raw;
@@ -61,7 +52,7 @@ public final class MetalShot extends Application {
 									}
 								}
 							});
-							Thread.sleep(500);
+							Thread.sleep(200);
 						}
 
 					} catch (Exception e) {

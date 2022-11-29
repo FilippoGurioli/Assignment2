@@ -29,6 +29,7 @@ public class GUIController implements Initializable{
     
 	@Override
     public void initialize(URL location, ResourceBundle resources) {
+        this.lblLight.setText("Light:OFF");
     	this.areaChart.getData().add(series);
     	this.xAxis.setForceZeroInRange(false);
     	this.areaChart.setCreateSymbols(false);
