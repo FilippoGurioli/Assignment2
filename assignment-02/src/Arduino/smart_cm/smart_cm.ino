@@ -20,6 +20,7 @@ Cose da fare (in ordine di importanza secondo me):
 - gestire il servo tramite java
 - creare il protocollo di comunicazione della seriale (con tanto di passaggio del periodo, WL1, WL2, WL3)
 - vedere se c'è un modo per fare i cpp
+- refactoring nome smart-bridge
 */
 #include "myLib/Tasks/Controller.h"
 #include "myLib/Scheduler.h"

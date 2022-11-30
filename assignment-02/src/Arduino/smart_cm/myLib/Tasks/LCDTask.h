@@ -2,6 +2,7 @@
 #define LCDTASK
 
 #include "ITask.h"
+#include "WaterDetectionTask.h"
 #include "../Peripherals/Display/Display.h"
 
 class LCDTask: public ITask {
@@ -30,7 +31,7 @@ class LCDTask: public ITask {
             }
             switch (state) {
                 case ALARM:
-                    this->display->updateStatValue(2, servoAngle);
+                    this->display->updateStatValue(2, servoAngle -1);
                 case PREALARM:
                     this->display->updateStatValue(1, wl);
                     break;

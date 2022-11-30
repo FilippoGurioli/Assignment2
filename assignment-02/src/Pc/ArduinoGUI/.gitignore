@@ -277,8 +277,7 @@ gradle-app.setting
 # Eclipse Gradle plugin generated files
 # Eclipse Core
 .project
-# JDT-specific (Eclipse Java Development Tools)
-.classpath
+
 
 # End of https://www.toptal.com/developers/gitignore/api/eclipse,gradle,java,intellij+all,windows,linux,macos
 
