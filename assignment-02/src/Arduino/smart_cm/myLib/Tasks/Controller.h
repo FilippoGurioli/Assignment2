@@ -6,9 +6,9 @@
 #define LEDPIN 2
 #define STRIG 3
 #define SECHO 4
-#define BUTTONPIN 5
+#define RLEDPIN 5
 #define GLEDPIN 6
-#define RLEDPIN 7
+#define BUTTONPIN 7
 #define PIRPIN 8
 #define SERVOPIN 9
 
@@ -22,10 +22,11 @@
 #include "../Utils/MsgService.cpp"
 #include <EnableInterrupt.h>
 
-void buttonHandler() {
+bool control = false;
 
+void interruptRoutine() {
+    if (control)    button = !button;
 }
-int a = enableInterrupt(5, buttonHandler, RISING);
 
 class Controller: public ITask {
 
@@ -49,7 +50,7 @@ class Controller: public ITask {
             this->init(period);
             this->wdt->init(1000);
             this->lt->init(250);
-            this->st->init(100);
+            this->st->init(500);
             this->lcdt->init(750);
             this->scheduler->pushTask(this);
             this->scheduler->pushTask(wdt);
@@ -66,6 +67,7 @@ class Controller: public ITask {
                 } else if (newState == ALARM) {
                     this->scheduler->popTask();
                     this->scheduler->pushTask(this->st);
+                    control = true;
                     this->scheduler->pushTask(this->lcdt);
                 }
             } else if (state == PREALARM) {
@@ -75,14 +77,17 @@ class Controller: public ITask {
                     this->scheduler->popTask();
                     this->scheduler->popTask();
                     this->scheduler->pushTask(this->st);
+                    control = true;
                     this->scheduler->pushTask(this->lcdt);
                 }
             } else {
                 if (newState == NORMAL) {
+                    control = false;
                     this->scheduler->popTask();
                     this->scheduler->popTask();
                     this->scheduler->pushTask(this->lt);
                 } else if (newState == PREALARM) {
+                    control = false;
                     this->scheduler->popTask();
                     this->scheduler->popTask();
                     this->scheduler->pushTask(this->lt);
