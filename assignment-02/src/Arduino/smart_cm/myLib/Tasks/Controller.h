@@ -39,14 +39,14 @@ class Controller: public ITask {
         int cont = 0;
     
     public:
-        Controller(Scheduler* scheduler) {
+        Controller(Scheduler* scheduler, int period) {
             MsgService.init();
             this->scheduler = scheduler;
             this->wdt = new WaterDetectionTask(GLEDPIN, RLEDPIN, STRIG, SECHO);
             this->lt = new LampTask(LEDPIN, PRPIN, PIRPIN);
             this->st = new ServoTask(SERVOPIN, POTPIN, BUTTONPIN, wdt);
             this->lcdt = new LCDTask(wdt, st);
-            this->init(50);
+            this->init(period);
             this->wdt->init(1000);
             this->lt->init(250);
             this->st->init(100);
