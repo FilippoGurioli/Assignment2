@@ -46,12 +46,7 @@ class ServoTask: public ITask {
             button = false;
             servoAngle = 0;
         }
-
-        void moveServo (int deg) {
-            this->servo.write(deg);
-        }
-
-        
+		
 };
 
 #endif

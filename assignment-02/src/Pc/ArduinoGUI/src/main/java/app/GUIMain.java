@@ -16,20 +16,14 @@ public final class GUIMain extends Application {
     @Override
     public void start(final Stage primaryStage) throws IOException {
         try {
-            final FXMLLoader loader = new FXMLLoader(getClass().getResource("iot water check1.fxml"));
+            final FXMLLoader loader = new FXMLLoader(getClass().getResource("Assignment2GUI.fxml"));
             Parent root = loader.load();
             primaryStage.setScene(new Scene(root));
             primaryStage.show();
 
             new Thread() {
                 ShowSerialPorts ssp;
-                boolean first = true;
-                int WL1;
-                int WL2;
-                int WL3;
-                int period = 0;
-
-                String[] msgArray = {"","","",""};
+                String[] msgArray = {"","",""};
 
                 public void run() {
                     try {
@@ -43,14 +37,6 @@ public final class GUIMain extends Application {
 
                             for (int i = 0; i < 3; i++) {
                                 msgArray[i] = channel.receiveMsg();
-                            }
-
-                            if (first) {
-                                //period = Integer.parseInt(msgArray[0]);
-                                //WL1 = Integer.parseInt(msgArray[1]);
-                                //WL2 = Integer.parseInt(msgArray[2]);
-                                //WL3 = Integer.parseInt(msgArray[3]);
-                                first = false;
                             }
 
                             GUIController guiController = (GUIController) loader.getController();
@@ -69,16 +55,12 @@ public final class GUIMain extends Application {
                                     raw = raw < 0 ? 0 : raw;
                                     int conversion = 100 - (raw / 2);
                                     guiController.updateChart(conversion);
-                                    //Update Servo/Slider
-
+                                    
                                     if (msgArray[0].equals("ALARM")) {
-                                        guiController.disableSlider(false);
+                                        guiController.disableServoControls(false);
                                     } else {
-                                        guiController.disableSlider(true);
+                                        guiController.disableServoControls(true);
                                     }
-
-                                    //channel.sendMsg(String.valueOf(guiController.getSUpdate()));
-
                                 }
                             });
                             Thread.sleep(300);
@@ -94,5 +76,5 @@ public final class GUIMain extends Application {
             e.printStackTrace();
         }
     }
-
+    
 }

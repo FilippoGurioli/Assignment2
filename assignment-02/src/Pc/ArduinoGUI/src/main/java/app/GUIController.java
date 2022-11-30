@@ -4,16 +4,19 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Series;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 
-public class GUIController implements Initializable{
+public class GUIController implements Initializable {
 
     @FXML
     private Label lblState;
@@ -25,12 +28,15 @@ public class GUIController implements Initializable{
     private NumberAxis xAxis;
     @FXML
     private Slider sldServo;
+    @FXML
+    private Button btnControl;
 
     private XYChart.Series<Integer, Integer> series = new Series<>();
     private XYChart.Series<Integer, Integer> WL1 = new Series<>();
     private XYChart.Series<Integer, Integer> WL2 = new Series<>();
     private int time = 0;
     private int degrees = 0;
+    private boolean guiControl = false;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -45,7 +51,7 @@ public class GUIController implements Initializable{
         this.areaChart.getYAxis().setAutoRanging(false);
         this.series.setName("Water level");
 
-        //Slider setup
+        //Slider/Button setup
         this.sldServo.valueProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observableValue, Number oldValue, Number newValue) {
@@ -53,6 +59,18 @@ public class GUIController implements Initializable{
             }
         });
         this.sldServo.disableProperty().set(true);
+        
+        this.btnControl.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if (guiControl) {
+                    guiControl = false;
+                } else {
+                    guiControl = true;
+                }
+            }
+        });
+        this.btnControl.disableProperty().set(true);
     }
 
     void updateState(String state) {
@@ -75,17 +93,9 @@ public class GUIController implements Initializable{
         this.WL2.getData().add(new XYChart.Data<>(time, 92));
     }
 
-    void disableSlider(boolean state) {
+    void disableServoControls(boolean state) {
         this.sldServo.disableProperty().set(state);
+        this.btnControl.disableProperty().set(state);
     }
-
-    int getSUpdate() {
-        return this.degrees;
-    }
-
-    void setValues() {
-
-    }
-
 
 }

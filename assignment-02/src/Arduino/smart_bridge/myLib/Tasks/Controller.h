@@ -59,7 +59,6 @@ class Controller: public ITask {
             this->oldState = NORMAL;
         }
 
-
         void tick() {
             if (oldState == NORMAL) {
                 if (state == PREALARM) {
@@ -95,7 +94,6 @@ class Controller: public ITask {
                 }
             }
             if (cont == 0) {
-
                 if (state == NORMAL)   MsgService.sendMsg("NORMAL");
                 else if (state == PREALARM)   MsgService.sendMsg("PREALARM");
                 else   MsgService.sendMsg("ALARM");
@@ -110,17 +108,13 @@ class Controller: public ITask {
             }
             this->cont++;
             this->cont = cont % 18;
-
-            //silvia
-            //int deg = (int)MsgService.receiveMsg();
-            //this->st->moveServo(deg);
-
             this->oldState = state;
         } 
 
         void reset () {
             //Nothing to reset
         }
+		
 };
 
 #endif
