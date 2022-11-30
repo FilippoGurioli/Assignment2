@@ -2,7 +2,6 @@
 #define SERVOTASK
 
 #include "ITask.h"
-#include "WaterDetectionTask.h"
 #include "../Peripherals/Potentiometer/Potentiometer.h"
 #include <ServoTimer2.h>
 
@@ -10,22 +9,21 @@
 #define MAXROT 2250
 
 bool button = false;
+int servoAngle = 0;
 
 class ServoTask: public ITask {
 
     private:
         ServoTimer2 servo;
-        WaterDetectionTask* wdt;
         IPotentiometer* pot;
         int bPin;
 
     public:
 
-        ServoTask(int sPin, int pPin, int bPin, WaterDetectionTask* wdt) {
+        ServoTask(int sPin, int pPin, int bPin) {
             this->bPin = bPin;
             this->servo.attach(sPin);
             this->pot = new Potentiometer(pPin);
-            this->wdt = wdt;
         }
 
         void init(int period) {
@@ -35,21 +33,20 @@ class ServoTask: public ITask {
 
         void tick() {
             if (button) {
-                this->servo.write(map(this->pot->getValue(), 0, 1024, MINROT, MAXROT));
+                int var = this->pot->getValue();
+                this->servo.write(map(var, 0, 1024, MINROT, MAXROT));
+                servoAngle = map(var, 0, 1024, 0, 181);
             } else {
-                int wl = this->wdt->getDistance();
-                wl = (wl < WL3) ? WL3 : wl;
-                this->servo.write(map(wl, WL2, WL3, MINROT, MAXROT));
+                int var = (wl < WL3) ? WL3 : wl;
+                this->servo.write(map(var, WL2, WL3, MINROT, MAXROT));
+                servoAngle = map(var, WL2, WL3, 0, 181);
             }
         }
 
         void reset() {
             this->servo.write(MINROT);
             button = false;
-        }
-
-        int getAngle(){
-            return map(this->servo.read(), MINROT, MAXROT, 0, 180);
+            servoAngle = 0;
         }
 
         void moveServo (int deg) {

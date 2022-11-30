@@ -16,8 +16,8 @@
 #include "ITask.h"
 #include "WaterDetectionTask.h"
 #include "LampTask.h"
-#include "LCDTask.h"
 #include "ServoTask.h"
+#include "LCDTask.h"
 #include "../Utils/State.h"
 #include "../Utils/MsgService.cpp"
 #include <EnableInterrupt.h>
@@ -36,7 +36,7 @@ class Controller: public ITask {
         LCDTask* lcdt;
         Scheduler* scheduler;
         ServoTask* st;
-        State state;
+        State oldState;
         int cont = 0;
     
     public:
@@ -45,8 +45,8 @@ class Controller: public ITask {
             this->scheduler = scheduler;
             this->wdt = new WaterDetectionTask(GLEDPIN, RLEDPIN, STRIG, SECHO);
             this->lt = new LampTask(LEDPIN, PRPIN, PIRPIN);
-            this->st = new ServoTask(SERVOPIN, POTPIN, BUTTONPIN, wdt);
-            this->lcdt = new LCDTask(wdt, st);
+            this->st = new ServoTask(SERVOPIN, POTPIN, BUTTONPIN);
+            this->lcdt = new LCDTask();
             this->init(period);
             this->wdt->init(1000);
             this->lt->init(250);
@@ -55,25 +55,24 @@ class Controller: public ITask {
             this->scheduler->pushTask(this);
             this->scheduler->pushTask(wdt);
             this->scheduler->pushTask(lt);
-            this->state = NORMAL;
+            this->oldState = NORMAL;
         }
 
 
         void tick() {
-            State newState = this->wdt->getState();
-            if (state == NORMAL) {
-                if (newState == PREALARM) {
+            if (oldState == NORMAL) {
+                if (state == PREALARM) {
                     this->scheduler->pushTask(this->lcdt);
-                } else if (newState == ALARM) {
+                } else if (state == ALARM) {
                     this->scheduler->popTask();
                     this->scheduler->pushTask(this->st);
                     control = true;
                     this->scheduler->pushTask(this->lcdt);
                 }
-            } else if (state == PREALARM) {
-                if (newState == NORMAL) {
+            } else if (oldState == PREALARM) {
+                if (state == NORMAL) {
                     this->scheduler->popTask();
-                } else if (newState == ALARM) {
+                } else if (state == ALARM) {
                     this->scheduler->popTask();
                     this->scheduler->popTask();
                     this->scheduler->pushTask(this->st);
@@ -81,12 +80,12 @@ class Controller: public ITask {
                     this->scheduler->pushTask(this->lcdt);
                 }
             } else {
-                if (newState == NORMAL) {
+                if (state == NORMAL) {
                     control = false;
                     this->scheduler->popTask();
                     this->scheduler->popTask();
                     this->scheduler->pushTask(this->lt);
-                } else if (newState == PREALARM) {
+                } else if (state == PREALARM) {
                     control = false;
                     this->scheduler->popTask();
                     this->scheduler->popTask();
@@ -96,17 +95,17 @@ class Controller: public ITask {
             }
             if (cont == 0) {
 
-                if (newState == NORMAL)   MsgService.sendMsg("NORMAL");
-                else if (newState == PREALARM)   MsgService.sendMsg("PREALARM");
+                if (state == NORMAL)   MsgService.sendMsg("NORMAL");
+                else if (state == PREALARM)   MsgService.sendMsg("PREALARM");
                 else   MsgService.sendMsg("ALARM");
                 
-                if (this->lt->isOn()) {
+                if (ledOn) {
                     MsgService.sendMsg("ON");
                 } else {
                     MsgService.sendMsg("OFF");
                 }
                 
-                MsgService.sendMsg(String(this->wdt->getDistance()));
+                MsgService.sendMsg(String(wl));
             }
             this->cont++;
             this->cont = cont % 18;
@@ -115,7 +114,7 @@ class Controller: public ITask {
             //int deg = (int)MsgService.receiveMsg();
             //this->st->moveServo(deg);
 
-            this->state = newState;
+            this->oldState = state;
         } 
 
         void reset () {

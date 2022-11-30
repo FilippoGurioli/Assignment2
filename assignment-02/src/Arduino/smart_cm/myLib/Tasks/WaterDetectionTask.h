@@ -14,6 +14,9 @@
 #define WL2 25
 #define WL3 10
 
+State state;
+int wl = 0;
+
 class WaterDetectionTask: public ITask {
     
     private:
@@ -24,7 +27,6 @@ class WaterDetectionTask: public ITask {
         ISonar* sonar;
         ILed* redLed;
         ILed* greenLed;
-        State state;
 
         void switchPeriod(int newPeriod) {
             this->myPeriod = newPeriod;
@@ -36,7 +38,7 @@ class WaterDetectionTask: public ITask {
             this->redLedPin = redLedPin;
             this->trigPin = trigPin;
             this->echoPin = echoPin;
-            this->state = NORMAL;
+            state = NORMAL;
         }
 
         void init(int period) {
@@ -48,36 +50,28 @@ class WaterDetectionTask: public ITask {
         }
 
         void tick() {
-            int distance = this->sonar->getDistance();
-            if (distance > WL1 && state != NORMAL) { //->NORMAL
+            wl = this->sonar->getDistance();
+            if (wl > WL1 && state != NORMAL) { //->NORMAL
                 state = NORMAL;
                 greenLed->switchOn();
                 redLed->switchOff();
                 this->switchPeriod(PE_N);
-            } else if (distance <= WL1 && distance > WL2 && state != PREALARM) { //->PREALARM
+            } else if (wl <= WL1 && wl > WL2 && state != PREALARM) { //->PREALARM
                 state = PREALARM;
                 this->switchPeriod(PE_P);
                 greenLed->switchOn();
-            } else if (distance <= WL2 && state != ALARM) { //->ALARM
+            } else if (wl <= WL2 && state != ALARM) { //->ALARM
                 state = ALARM;
                 redLed->switchOn();
                 greenLed->switchOff();
                 this->switchPeriod(PE_A);
-            } else if (distance <= WL1 && distance > WL2) {
+            } else if (wl <= WL1 && wl > WL2) {
                 if (redLed->isOn()) {
                     redLed->switchOff();
                 } else {
                     redLed->switchOn();
                 }
             }
-        }
-
-        State getState() {
-            return this->state;
-        }
-
-        int getDistance() {
-            return this->sonar->getDistance();
         }
 
         void reset () {

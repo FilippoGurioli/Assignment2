@@ -9,6 +9,8 @@
 #include "../Peripherals/Photoresistor/Photoresistor.h"
 #include "../Peripherals/Pir/Pir.h"
 
+bool ledOn = false;
+
 class LampTask: public ITask {
     
     private:
@@ -18,10 +20,6 @@ class LampTask: public ITask {
         ILed* led;
         IPir* pir;
         IPhotoresistor* pr;
-        /*
-        I create a counter that count how many times
-        "tick" is called to create the T1 delay of the lamp.
-        */
         int cont;
     
     public:
@@ -44,15 +42,18 @@ class LampTask: public ITask {
             int light = this->pr->getLightLevel();
             if (led->isOn() && light > TH) {
                 led->switchOff();
+                ledOn = false;
             } else if (light <= TH) {
                 if (!led->isOn() && presence) {
                     led->switchOn();
+                    ledOn = true;
                     this->cont = 0;
                 } else if (led->isOn() && !presence) {
                     if (cont * this->myPeriod < T1) {
                         cont++;
                     } else {
                         led->switchOff();
+                        ledOn = false;
                         this->cont = 0;
                     }
                 }
@@ -61,10 +62,7 @@ class LampTask: public ITask {
 
         void reset() {
             this->led->switchOff();
-        }
-
-        bool isOn() {
-            return this->led->isOn();
+            ledOn = false;
         }
 };
 
