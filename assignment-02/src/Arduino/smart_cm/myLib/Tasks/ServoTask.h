@@ -16,12 +16,10 @@ class ServoTask: public ITask {
     private:
         ServoTimer2 servo;
         IPotentiometer* pot;
-        int bPin;
 
     public:
 
         ServoTask(int sPin, int pPin, int bPin) {
-            this->bPin = bPin;
             this->servo.attach(sPin);
             this->pot = new Potentiometer(pPin);
         }

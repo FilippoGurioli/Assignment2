@@ -41,6 +41,7 @@ class Controller: public ITask {
     
     public:
         Controller(Scheduler* scheduler, int period) {
+            enableInterrupt(BUTTONPIN, interruptRoutine, RISING);
             MsgService.init();
             this->scheduler = scheduler;
             this->wdt = new WaterDetectionTask(GLEDPIN, RLEDPIN, STRIG, SECHO);

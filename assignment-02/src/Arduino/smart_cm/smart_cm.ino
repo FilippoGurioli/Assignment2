@@ -23,7 +23,6 @@ Controller* controller;
 void setup() {
   scheduler.init(PERIOD);
   controller = new Controller(&scheduler, PERIOD);
-  enableInterrupt(7, interruptRoutine, RISING);
 }
 
 void loop() {
